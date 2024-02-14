@@ -17,7 +17,7 @@ function Card({book}: Props){
         <div className="w-full h-full py-5 flex justify-center items-center">
             <div className="relative h-full flex justify-center rounded-xl hover:scale-105 duration-500 transform transition cursor-pointer border">
                 
-                <div className="w-52 pb-2 bg-white rounded-xl shadow-xl z-10">
+                <div className="w-52 pb-2 bg-white rounded-xl shadow-2xl z-10">
 
                     <div className="relative">
 

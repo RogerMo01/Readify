@@ -1,6 +1,6 @@
 function NavMenu() {
   return (
-    <header className="bg-white mt-0">
+    <header className="bg-white mt-0 shadow-2xl">
       <nav
         className="flex  items-center justify-between bg-gray-400 p-6 lg:px-8"
         aria-label="Global"
