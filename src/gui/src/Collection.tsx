@@ -18,7 +18,7 @@ function Collection() {
       }, []);
       
     return(
-        <div>
+        <div className="ml-6 mr-6">
             <h1 className="flex py-5 md:px-10 px-5 md:mx-20 mx-5 font-bold text-4xl text-gray-800"> Books </h1>
             <div
                 className="flex overflow-x-scroll pb-10 hide-scroll-bar"
