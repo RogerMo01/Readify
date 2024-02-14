@@ -12,7 +12,7 @@ function NavMenu() {
             <span className="sr-only">Readify</span>
             <img
               className="h-20 w-auto"
-              src="logo.png"
+              src="brand.png"
               alt="Readify"
             />
           </a>
