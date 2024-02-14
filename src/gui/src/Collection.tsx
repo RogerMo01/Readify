@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Book } from "./types/types";
-import "./Collection.css"
 import Card from "./Card";
 
 function Collection() {
