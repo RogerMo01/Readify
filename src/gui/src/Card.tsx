@@ -53,9 +53,9 @@ function Card({book}: Props){
 
                                         {/* <!-- Rating total --> */}
                                         <p className="text-gray-600 font-bold text-xs md:text-sm ml-1">
-                                            {"4.5"}
+                                            {book.avgRating}
                                             {/* <!-- Jumlah review --> */}
-                                            {/* <span className="text-gray-500 font-normal"> ({book.numRatings} rewiews)</span> */}
+                                            <span className="text-gray-500 font-normal"> ({book.countRating} rewiews)</span>
                                         </p>
                                     </div>
                             </div>

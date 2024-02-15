@@ -7,6 +7,8 @@ export interface Book{
     publisher: string,
     imageURL_s: string,
     imageURL_m: string,
-    imageURL_l: string
+    imageURL_l: string,
+    avgRating: string,
+    countRating: string
 }
 
