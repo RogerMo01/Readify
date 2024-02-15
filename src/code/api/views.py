@@ -15,7 +15,7 @@ def get_ten_books(request):
 
     parentDir = os.path.dirname(os.path.abspath(__file__))
     
-    csv_file = os.path.join(parentDir, '..', '..', 'data', 'books_dataset.csv')
+    csv_file = os.path.join(parentDir, '..', '..', 'data', 'Books.csv')
     csv_file = os.path.abspath(csv_file)
 
     data = []

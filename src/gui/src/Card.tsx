@@ -22,25 +22,25 @@ function Card({book}: Props){
                     <div className="relative">
 
                         {!imageLoaded && <img src="no_cover_available.jpg" className="w-full h-full object-cover rounded-t-xl" alt=""></img>}
-                        <img src={book.coverImg} className="w-full h-full object-cover rounded-t-xl" alt="" onLoad={handleImageLoad}/>
+                        <img src={book.imageURL_m} className="w-full h-72 object-cover rounded-t-xl" alt="" onLoad={handleImageLoad}/>
                         
                         {/* Tag */}
-                        {book.awards.length > 2 && <div className="bottom-0 right-0 mb-2 mr-2 px-2 rounded-lg absolute bg-green-500 text-gray-100 text-xs font-medium">Award winning</div>}
+                        {/* {book.awards.length > 2 && <div className="bottom-0 right-0 mb-2 mr-2 px-2 rounded-lg absolute bg-green-500 text-gray-100 text-xs font-medium">Award winning</div>} */}
                     </div>
 
                     <div className="px-2 py-1">
 
                         {/* Product Title */}
-                        <div className="md:text-xl text-xl font-bold ">{book.title}</div>
+                        <div className="md:text-xl text-xl font-bold ">{book.bookTitle}</div>
                         <hr className="mt-2 mr-4 ml-4" />
-                        <div className="">{book.author}</div>
+                        <div className="">{book.bookAuthor}</div>
 
                         <div className="flex py-2">
 
                             {/*  Distance  */}
-                            {/* <div className="bg-gray-200 p-1 mr-2 rounded-full text-xs font-medium text-gray-900">
-                                0.5 Km
-                            </div> */}
+                            <div className="bg-gray-200 p-1 mr-2 rounded-full text-xs font-medium text-gray-900">
+                                {book.yearOfPublication}
+                            </div>
 
                             <div className="flex justify-between item-center">
                                     <div className="flex items-center">
@@ -53,9 +53,9 @@ function Card({book}: Props){
 
                                         {/* <!-- Rating total --> */}
                                         <p className="text-gray-600 font-bold text-xs md:text-sm ml-1">
-                                            {book.rating}
+                                            {"4.5"}
                                             {/* <!-- Jumlah review --> */}
-                                            <span className="text-gray-500 font-normal"> ({book.numRatings} rewiews)</span>
+                                            {/* <span className="text-gray-500 font-normal"> ({book.numRatings} rewiews)</span> */}
                                         </p>
                                     </div>
                             </div>
