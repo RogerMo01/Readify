@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       <NavMenu/>
-      <Collection/>
+      <Collection title='Made for you'/>
     </>
   )
 }

@@ -22,7 +22,7 @@ function Card({book}: Props){
                     <div className="relative">
 
                         {!imageLoaded && <img src="no_cover_available.jpg" className="w-full h-full object-cover rounded-t-xl" alt=""></img>}
-                        <img src={book.imageURL_m} className="w-full h-72 object-cover rounded-t-xl" alt="" onLoad={handleImageLoad}/>
+                        <img src={book.imageURL_l} className="w-full h-72 object-cover rounded-t-xl" alt="" onLoad={handleImageLoad}/>
                         
                         {/* Tag */}
                         {/* {book.awards.length > 2 && <div className="bottom-0 right-0 mb-2 mr-2 px-2 rounded-lg absolute bg-green-500 text-gray-100 text-xs font-medium">Award winning</div>} */}
@@ -55,7 +55,7 @@ function Card({book}: Props){
                                         <p className="text-gray-600 font-bold text-xs md:text-sm ml-1">
                                             {book.avgRating}
                                             {/* <!-- Jumlah review --> */}
-                                            <span className="text-gray-500 font-normal"> ({book.countRating} rewiews)</span>
+                                            <span className="text-gray-500 font-normal"> ({book.countRating} ratings)</span>
                                         </p>
                                     </div>
                             </div>

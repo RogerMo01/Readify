@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import { Book } from "./types/types";
 import Card from "./Card";
 
-function Collection() {
+interface Props{
+    title: string
+}
+
+function Collection({title}: Props) {
     const [bookList, setBookList] = useState<Book[]>([]);
 
     useEffect(() => {
@@ -19,7 +23,9 @@ function Collection() {
       
     return(
         <div className="ml-6 mr-6">
-            <h1 className="flex py-5 md:px-10 px-5 md:mx-20 mx-5 font-bold text-4xl text-gray-800"> Books </h1>
+            <h1 className="flex mt-12 md:mx-10 font-bold text-3xl text-gray-800 border-b"> 
+                {title}
+            </h1>
             <div
                 className="flex overflow-x-scroll pb-10 hide-scroll-bar"
             >
