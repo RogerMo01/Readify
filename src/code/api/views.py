@@ -41,3 +41,24 @@ def filter_books(request):
 @api_view(['GET'])
 def user_books_list(request):
     return Response({'data': list(user_books.items())})
+
+@api_view(['POST'])
+def add_book_to_user(request):
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+
+        isbn = data.get('isbn')
+        title = data.get('bookTitle')
+        author = data.get('bookAuthor')
+        rating = "0.0"
+        cover = data.get('imageURL_s')
+
+        user_books[isbn] = {'rating': rating, 'title': title, 'author': author, 'cover': cover}
+
+        # Save json
+        with open(user_books_path, 'w') as user_books_file:
+            json.dump(user_books, user_books_file, indent=2)
+
+        return Response({'message': "OK"})
+    except Exception as e:
+        return Response({'message': str(e)}, status=400)

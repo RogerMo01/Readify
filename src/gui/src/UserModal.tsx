@@ -18,6 +18,8 @@ export default function UserModal({open, setOpen}: Props) {
   const [userBooks, setUserBooks] = useState([]);
   const [userBooksInfo, setUserBooksInfo] = useState<Book[]>([]);
   const cancelButtonRef = useRef(null)
+  
+  const [refresh, setRefresh] = useState(false);
 
 
   // Ask for search query
@@ -35,7 +37,7 @@ export default function UserModal({open, setOpen}: Props) {
         });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startSearch])
+  }, [startSearch, refresh])
 
 
   // Load user library
@@ -48,7 +50,7 @@ export default function UserModal({open, setOpen}: Props) {
       .catch(error => {
         console.log(error);
       });
-  }, [])
+  }, [refresh])
 
   // Load user book info
   useEffect(() => {
@@ -72,6 +74,7 @@ export default function UserModal({open, setOpen}: Props) {
 
     // Llama a la función fetchData cuando cambie userBooks
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userBooks]);
   
 
@@ -142,7 +145,7 @@ export default function UserModal({open, setOpen}: Props) {
                         <div className='mt-2'>
                           {bookList.map((book) => (
                             <ul className="mx-20 divide-y divide-gray-200">
-                              <SearchItem book={book} />
+                              <SearchItem book={book} refreshValue={refresh} refresh={setRefresh} />
                             </ul>
                           ))}
                         </div>
