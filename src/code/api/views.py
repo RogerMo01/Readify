@@ -1,10 +1,29 @@
+import json
 import os
-
+import csv
 from django.shortcuts import render
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import csv
+
+all_books_data = []
+user_books = {}
+
+# Cargar datos del CSV al inicio
+csv_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'Books.csv')
+csv_file_path = os.path.abspath(csv_file_path)
+
+user_books_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'user_books.json')
+user_books_path = os.path.abspath(user_books_path)
+
+print("⏳ Load started")
+with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
+    csv_reader = csv.DictReader(csvfile)
+    all_books_data = list(csv_reader)
+
+with open(user_books_path, 'r') as user_books_file:
+    user_books = json.load(user_books_file)
+print("✅ Load end")
+
 
 @api_view(['GET'])
 def hello_world(request):
@@ -12,25 +31,13 @@ def hello_world(request):
 
 @api_view(['GET'])
 def get_ten_books(request):
+    return Response({'data': all_books_data[:10]})
 
-    parentDir = os.path.dirname(os.path.abspath(__file__))
-    
-    csv_file = os.path.join(parentDir, '..', '..', 'data', 'Books.csv')
-    csv_file = os.path.abspath(csv_file)
 
-    data = []
-    count = 0
+@api_view(['GET'])
+def filter_books(request):
+    return Response({'data': all_books_data[:10]})
 
-    # Scan all books
-    with open(csv_file, newline='', encoding='utf-8') as csvfile:
-        csv_reader = csv.DictReader(csvfile)
-        
-        for book in csv_reader:
-
-            if count >= 10:
-                break
-            
-            data.append(book)
-            count += 1
-
-    return Response({'data': data})
+@api_view(['GET'])
+def user_books_list(request):
+    return Response({'data': list(user_books.items())})

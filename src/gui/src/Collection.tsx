@@ -33,8 +33,8 @@ function Collection({title}: Props) {
                 className="flex flex-nowrap"
                 >
                     {bookList.map((book) => (
-                        <div className="inline-block px-3">
-                            <Card book={book}/>
+                        <div key={book.isbn} className="inline-block px-3">
+                            <Card key={book.isbn} book={book}/>
                         </div>
                     ))}
                 </div>
