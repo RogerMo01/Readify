@@ -54,11 +54,10 @@ print("✅ Load end")
 def main_recommendation(request):
     # Main books recommender function
     
-    print(user_books.items())
     l1 = list(map(lambda x : x[0], user_books.items()))
     l2 = set([])
-    except_count = 0
-    
+
+    # Graph Search
     for b in l1:
         for u in book_user_list[b]:
             l2.add(u)
@@ -66,7 +65,6 @@ def main_recommendation(request):
                 try:
                     readers[b2].append(u)
                     readers_count[b2]+=1
-                    except_count+=1
                 except:
                     l3.add(b2)
                     readers[b2] = [u]
@@ -76,9 +74,20 @@ def main_recommendation(request):
     print(f'l1 spread to {len(l2)} neighbors')
     print(f'l2 spread to {len(l3)} recommended books')
 
-    ranked_set = sorted(l3, key=lambda x: readers_count.get(x, 0), reverse=True)
-    limited_ranked_set = ranked_set[:10]
 
+    ranked_set = list(sorted(l3, key=lambda x: readers_count.get(x, 0), reverse=True))
+
+    # Limit ranked set to 10
+    limited_ranked_set = []
+    c = 0
+    for b in ranked_set:
+        if c == 10:
+            break
+        elif b not in user_books:
+            limited_ranked_set.append(b)
+            c+=1
+
+    print('\n~~~~~~~~ Rank: ~~~~~~~~')
     for x in limited_ranked_set:
         print(f'{x} ({readers_count[x]} times)')
 
