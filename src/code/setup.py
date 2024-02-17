@@ -15,6 +15,7 @@ ratings_file = os.path.join(parentDir, '..', 'data', 'Ratings.csv')
 ratings_file = os.path.abspath(ratings_file)
 
 ratings = []
+books = []
 
 
 
@@ -71,6 +72,7 @@ with open(books_file, newline='', encoding='utf-8') as csvfile:
     csv_reader = csv.DictReader(csvfile)
 
     for book in csv_reader:
+        books.append(book)
         indexed_books[book['isbn']] = { 'isbn': book['isbn'],
                                         'bookTitle': book['bookTitle'],
                                         'bookAuthor': book['bookAuthor'],
