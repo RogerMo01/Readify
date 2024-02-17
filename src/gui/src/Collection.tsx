@@ -11,7 +11,7 @@ function Collection({title}: Props) {
     const [bookList, setBookList] = useState<Book[]>([]);
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/list')
+        axios.get('http://localhost:8000/api/main-recommendation')
           .then(response => {
             setBookList(response.data.data);
             console.log(`Received: ${response.data.data}`)
@@ -33,8 +33,8 @@ function Collection({title}: Props) {
                 className="flex flex-nowrap"
                 >
                     {bookList.map((book) => (
-                        <div className="inline-block px-3">
-                            <Card book={book}/>
+                        <div key={book.isbn} className="inline-block px-3">
+                            <Card key={book.isbn} book={book}/>
                         </div>
                     ))}
                 </div>

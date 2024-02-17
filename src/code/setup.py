@@ -15,6 +15,7 @@ ratings_file = os.path.join(parentDir, '..', 'data', 'Ratings.csv')
 ratings_file = os.path.abspath(ratings_file)
 
 ratings = []
+books = []
 
 
 
@@ -59,6 +60,37 @@ with open(dest_file, 'w') as json_file:
 print('✅ Success')
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Save indexed books ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+print('⏳ Starting save book indexed json...')
+indexed_books = {}
+
+print('⏳ Scanning books...')
+with open(books_file, newline='', encoding='utf-8') as csvfile:
+    csv_reader = csv.DictReader(csvfile)
+
+    for book in csv_reader:
+        books.append(book)
+        indexed_books[book['isbn']] = { 'isbn': book['isbn'],
+                                        'bookTitle': book['bookTitle'],
+                                        'bookAuthor': book['bookAuthor'],
+                                        'yearOfPublication': book['yearOfPublication'],
+                                        'publisher': book['publisher'],
+                                        'imageURL_s': book['imageURL_s'],
+                                        'imageURL_m': book['imageURL_m'],
+                                        'imageURL_l': book['imageURL_l'],
+                                        'avgRating': book['avgRating'],
+                                        'countRating': book['countRating'] }
+        
+print('⏳ Saving books...')
+dest_file = os.path.join(parentDir, '..', 'data', 'indexed_books.json')
+dest_file = os.path.abspath(dest_file)
+with open(dest_file, 'w') as json_file:
+    json.dump(indexed_books, json_file, indent=2)
+print('✅ Success')
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
