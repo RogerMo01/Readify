@@ -77,6 +77,13 @@ export default function UserModal({open, setOpen}: Props) {
     fetchData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userBooks]);
+
+
+  // Filter search result
+  useEffect(() => {
+    const filteredList = bookList.filter(b => !userBooks.some(userBook => userBook[0] === b.isbn))
+    setBookList(filteredList)
+  }, [userBooks])
   
 
 

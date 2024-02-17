@@ -36,7 +36,24 @@ def get_ten_books(request):
 
 @api_view(['GET'])
 def filter_books(request):
-    return Response({'data': all_books_data[:10]})
+    ub = list(user_books.items())
+    print(ub)
+
+    count = 0
+    response = []
+
+    for book in all_books_data:
+        if count == 10:
+            break
+        
+        print(book['isbn'])
+        if any(x[0] == book['isbn'] for x in ub):
+            continue
+        else:
+            response.append(book)
+            count+=1
+
+    return Response({'data': response})
 
 @api_view(['GET'])
 def user_books_list(request):
