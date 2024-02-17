@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 # Runtime loaded data
 all_books_data = []
+indexed_books = {}
 user_books = {}
 user_book_list = {}
 book_user_list = {}
@@ -28,6 +29,9 @@ user_book_list_path = os.path.abspath(user_book_list_path)
 book_user_list_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'book_user_list.json')
 book_user_list_path = os.path.abspath(book_user_list_path)
 
+indexed_books_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'indexed_books.json')
+indexed_books_path = os.path.abspath(indexed_books_path)
+
 
 # Start load
 print("⏳ Load started")
@@ -40,6 +44,8 @@ with open(user_book_list_path, 'r') as user_book_list_file:
     user_book_list = json.load(user_book_list_file)
 with open(book_user_list_path, 'r') as book_user_list_file:
     book_user_list = json.load(book_user_list_file)
+with open(indexed_books_path, 'r') as indexed_books_file:
+    indexed_books = json.load(indexed_books_file)
 print("✅ Load end")
 
 
@@ -76,8 +82,9 @@ def main_recommendation(request):
     for x in limited_ranked_set:
         print(f'{x} ({readers_count[x]} times)')
 
-    
-    return Response({'data': [x for x in all_books_data if x['isbn'] in limited_ranked_set]})
+    request_response = list(map(lambda x: indexed_books[x], limited_ranked_set))
+
+    return Response({'data': request_response})
 
 @api_view(['GET'])
 def filter_books(request):
