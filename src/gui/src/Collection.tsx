@@ -11,7 +11,7 @@ function Collection({title}: Props) {
     const [bookList, setBookList] = useState<Book[]>([]);
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/list')
+        axios.get('http://localhost:8000/api/main-recommendation')
           .then(response => {
             setBookList(response.data.data);
             console.log(`Received: ${response.data.data}`)

@@ -10,6 +10,9 @@ all_books_data = []
 user_books = {}
 user_book_list = {}
 book_user_list = {}
+l3 = set([])
+readers = {}
+readers_count = {}
 
 
 # Data paths
@@ -31,6 +34,8 @@ print("⏳ Load started")
 with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
     csv_reader = csv.DictReader(csvfile)
     all_books_data = list(csv_reader)
+with open(user_books_path, 'r') as user_books_file:
+    user_books = json.load(user_books_file)
 with open(user_book_list_path, 'r') as user_book_list_file:
     user_book_list = json.load(user_book_list_file)
 with open(book_user_list_path, 'r') as book_user_list_file:
@@ -40,9 +45,39 @@ print("✅ Load end")
 
 
 @api_view(['GET'])
-def get_ten_books(request):
+def main_recommendation(request):
     # Main books recommender function
-    return Response({'data': all_books_data[:10]})
+    
+    print(user_books.items())
+    l1 = list(map(lambda x : x[0], user_books.items()))
+    l2 = set([])
+    except_count = 0
+    
+    for b in l1:
+        for u in book_user_list[b]:
+            l2.add(u)
+            for b2 in user_book_list[u]:
+                try:
+                    readers[b2].append(u)
+                    readers_count[b2]+=1
+                    except_count+=1
+                except:
+                    l3.add(b2)
+                    readers[b2] = [u]
+                    readers_count[b2] = 0
+
+    print(f'User spread to {len(l1)} books')
+    print(f'l1 spread to {len(l2)} neighbors')
+    print(f'l2 spread to {len(l3)} recommended books')
+
+    ranked_set = sorted(l3, key=lambda x: readers_count.get(x, 0), reverse=True)
+    limited_ranked_set = ranked_set[:10]
+
+    for x in limited_ranked_set:
+        print(f'{x} ({readers_count[x]} times)')
+
+    
+    return Response({'data': [x for x in all_books_data if x['isbn'] in limited_ranked_set]})
 
 @api_view(['GET'])
 def filter_books(request):
