@@ -38,17 +38,16 @@ with open(book_user_list_path, 'r') as book_user_list_file:
 print("✅ Load end")
 
 
-@api_view(['GET'])
-def hello_world(request):
-    return Response({'message': 'This is a message to confirm connection between Django and React'})
 
 @api_view(['GET'])
 def get_ten_books(request):
+    # Main books recommender function
     return Response({'data': all_books_data[:10]})
-
 
 @api_view(['GET'])
 def filter_books(request):
+    # Search for user query
+
     ub = list(user_books.items())
 
     count = 0
@@ -68,6 +67,7 @@ def filter_books(request):
 
 @api_view(['GET'])
 def user_books_list(request):
+    # List of user rated books
     return Response({'data': list(user_books.items())})
 
 @api_view(['POST'])
