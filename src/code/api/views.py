@@ -5,23 +5,36 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+# Runtime loaded data
 all_books_data = []
 user_books = {}
+user_book_list = {}
+book_user_list = {}
 
-# Cargar datos del CSV al inicio
+
+# Data paths
 csv_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'Books.csv')
 csv_file_path = os.path.abspath(csv_file_path)
 
 user_books_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'user_books.json')
 user_books_path = os.path.abspath(user_books_path)
 
+user_book_list_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'user_book_list.json')
+user_book_list_path = os.path.abspath(user_book_list_path)
+
+book_user_list_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'book_user_list.json')
+book_user_list_path = os.path.abspath(book_user_list_path)
+
+
+# Start load
 print("⏳ Load started")
 with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
     csv_reader = csv.DictReader(csvfile)
     all_books_data = list(csv_reader)
-
-with open(user_books_path, 'r') as user_books_file:
-    user_books = json.load(user_books_file)
+with open(user_book_list_path, 'r') as user_book_list_file:
+    user_book_list = json.load(user_book_list_file)
+with open(book_user_list_path, 'r') as book_user_list_file:
+    book_user_list = json.load(book_user_list_file)
 print("✅ Load end")
 
 
@@ -37,7 +50,6 @@ def get_ten_books(request):
 @api_view(['GET'])
 def filter_books(request):
     ub = list(user_books.items())
-    print(ub)
 
     count = 0
     response = []
@@ -46,7 +58,6 @@ def filter_books(request):
         if count == 10:
             break
         
-        print(book['isbn'])
         if any(x[0] == book['isbn'] for x in ub):
             continue
         else:

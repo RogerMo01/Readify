@@ -83,6 +83,7 @@ export default function UserModal({open, setOpen}: Props) {
   useEffect(() => {
     const filteredList = bookList.filter(b => !userBooks.some(userBook => userBook[0] === b.isbn))
     setBookList(filteredList)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userBooks])
   
 
@@ -132,7 +133,7 @@ export default function UserModal({open, setOpen}: Props) {
                     </div>
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                       <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                        Manage my book ratings
+                        My Library
                       </Dialog.Title>
 
                       <div className="mt-2">
