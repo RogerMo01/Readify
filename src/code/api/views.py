@@ -38,8 +38,15 @@ print("⏳ Load started")
 with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
     csv_reader = csv.DictReader(csvfile)
     all_books_data = list(csv_reader)
-with open(user_books_path, 'r') as user_books_file:
-    user_books = json.load(user_books_file)
+
+try:
+    with open(user_books_path, 'r') as user_books_file:
+        user_books = json.load(user_books_file)
+except:
+    user_books = {}
+    with open(user_books_path, 'w') as user_books_file:
+        json.dump(user_books, user_books_file, indent=2)
+
 with open(user_book_list_path, 'r') as user_book_list_file:
     user_book_list = json.load(user_book_list_file)
 with open(book_user_list_path, 'r') as book_user_list_file:
@@ -54,6 +61,8 @@ print("✅ Load end")
 def main_recommendation(request):
     # Main books recommender function
     
+    readers = {}
+    readers_count = {}
     l1 = list(map(lambda x : x[0], user_books.items()))
     l2 = set([])
 
@@ -94,6 +103,7 @@ def main_recommendation(request):
     request_response = list(map(lambda x: indexed_books[x], limited_ranked_set))
 
     return Response({'data': request_response})
+
 
 @api_view(['GET'])
 def filter_books(request):
