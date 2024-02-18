@@ -4,6 +4,7 @@ import csv
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from api.utils import pearson_neighborhood, count_sorter
 
 # Runtime loaded data
 all_books_data = []
@@ -14,6 +15,8 @@ book_user_list = {}
 l3 = set([])
 readers = {}
 readers_count = {}
+explicit_matrix = {}
+users_avg_rating = {}
 
 
 # Data paths
@@ -31,6 +34,15 @@ book_user_list_path = os.path.abspath(book_user_list_path)
 
 indexed_books_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'indexed_books.json')
 indexed_books_path = os.path.abspath(indexed_books_path)
+
+explicit_matrix_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'explicit_ratings_matrix.json')
+explicit_matrix_path = os.path.abspath(explicit_matrix_path)
+
+users_avg_rating_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'users_avg_rating.json')
+users_avg_rating_path = os.path.abspath(users_avg_rating_path)
+
+config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'config.json')
+config_path = os.path.abspath(config_path)
 
 
 # Start load
@@ -53,6 +65,10 @@ with open(book_user_list_path, 'r') as book_user_list_file:
     book_user_list = json.load(book_user_list_file)
 with open(indexed_books_path, 'r') as indexed_books_file:
     indexed_books = json.load(indexed_books_file)
+with open(explicit_matrix_path, 'r') as explicit_matrix_file:
+    explicit_matrix = json.load(explicit_matrix_file)
+with open(users_avg_rating_path, 'r') as users_avg_rating_file:
+    users_avg_rating = json.load(users_avg_rating_file)
 print("✅ Load end")
 
 
@@ -83,23 +99,47 @@ def main_recommendation(request):
     print(f'l1 spread to {len(l2)} neighbors')
     print(f'l2 spread to {len(l3)} recommended books')
 
+    # Load configuration
+    with open(config_path, 'r') as config_file:
+        config = json.load(config_file)
+    selection_method = config['selection']
+    ranking_method = config['ranking']
+    limit = int(config['limit'])
 
-    ranked_set = list(sorted(l3, key=lambda x: readers_count.get(x, 0), reverse=True))
 
-    # Limit ranked set to 10
+    # 📊 Switch on set selection method
+    if selection_method == "pearson":
+        selected_set = pearson_neighborhood(l1, l2, l3, explicit_matrix, users_avg_rating, user_books, readers)
+    else:
+        selected_set = l3
+
+
+    # 📉 Switch on ranking method
+    ranked_set = count_sorter(selected_set, readers_count)
+    
+
+
+    # 🔚 Switch on rank limit
     limited_ranked_set = []
-    c = 0
-    for b in ranked_set:
-        if c == 10:
-            break
-        elif b not in user_books:
-            limited_ranked_set.append(b)
-            c+=1
+    if len(ranked_set) > limit:
+        c = 0
+        for b in ranked_set:
+            if c == limit:
+                break
+            elif b not in user_books:
+                limited_ranked_set.append(b)
+                c+=1
+    else:
+        limited_ranked_set = ranked_set
 
+
+    # Show log
     print('\n~~~~~~~~ Rank: ~~~~~~~~')
     for x in limited_ranked_set:
         print(f'{x} ({readers_count[x]} times)')
+    
 
+    # Map data
     request_response = list(map(lambda x: indexed_books[x], limited_ranked_set))
 
     return Response({'data': request_response})
