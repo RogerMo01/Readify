@@ -1,7 +1,6 @@
-import axios from "axios";
 import { Book } from "./types/types";
-import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import { SetStateAction } from "react";
+import RateModal from "./RateModal";
 
 interface Props{
     book: Book,
@@ -9,19 +8,6 @@ interface Props{
     refresh: React.Dispatch<SetStateAction<boolean>>
 }
 function SearchItem({book, refreshValue, refresh}:Props){
-
-    async function handleAddBook(event: React.MouseEvent): Promise<void> {
-        console.log(event)
-        
-        try {
-        const response = await axios.post('http://localhost:8000/api/add-book/', book);
-            console.log('Server answer:', response.data);
-            refresh(!refreshValue)
-
-        } catch (error) {
-            console.error('Error: POST:', error);
-        }
-    }
 
     return(
         <li className="mb-1 shadow-xl hover:">
@@ -48,7 +34,8 @@ function SearchItem({book, refreshValue, refresh}:Props){
                         <p className="text-sm text-gray-400">
                             ({book.countRating} reviews)
                         </p>
-                        <PlusCircleIcon className="h-6 w-10 text-blue-600 mr-10 hover:cursor-pointer rounded-full hover:text-blue-500" onClick={handleAddBook} />
+                        <RateModal book={book} refresh={refresh} refreshValue={refreshValue}/>
+                        {/* <PlusCircleIcon className="h-6 w-10 text-blue-600 mr-10 hover:cursor-pointer rounded-full hover:text-blue-500" onClick={handleAddBook} /> */}
                     </div>
                     <p className="text-sm text-gray-500">
                         {book.yearOfPublication}

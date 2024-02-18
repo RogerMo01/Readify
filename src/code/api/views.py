@@ -211,8 +211,8 @@ def add_book_to_user(request):
         isbn = data.get('isbn')
         title = data.get('bookTitle')
         author = data.get('bookAuthor')
-        rating = "0.0"
         cover = data.get('imageURL_s')
+        rating = data.get('rating')
 
         user_books[isbn] = {'rating': rating, 'title': title, 'author': author, 'cover': cover}
 

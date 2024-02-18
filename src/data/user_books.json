@@ -1,14 +1,20 @@
 {
   "034545104X": {
-    "rating": "10.0",
+    "rating": "10",
     "title": "Flesh Tones: A Novel",
     "author": "M. J. Rose",
     "cover": "http://images.amazon.com/images/P/034545104X.01.THUMBZZZ.jpg"
   },
   "0439064872": {
-    "rating": "8.0",
+    "rating": "8",
     "title": "Harry Potter and the Chamber of Secrets (Book 2)",
     "author": "J. K. Rowling",
     "cover": "http://images.amazon.com/images/P/0439064872.01.THUMBZZZ.jpg"
+  },
+  "0195153448": {
+    "rating": "3",
+    "title": "Classical Mythology",
+    "author": "Mark P. O. Morford",
+    "cover": "http://images.amazon.com/images/P/0195153448.01.THUMBZZZ.jpg"
   }
 }
