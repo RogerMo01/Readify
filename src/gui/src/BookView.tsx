@@ -1,4 +1,5 @@
 import { UserBook } from "./types/types";
+import { StarIcon } from '@heroicons/react/24/solid'
 
 interface Props{
     book: UserBook
@@ -18,6 +19,12 @@ function BookView({book}:Props){
                     <p className="text-sm text-gray-500 truncate">
                     {book.author}
                     </p>
+                    <div className="flex flex-row">
+                        <StarIcon className='h-5 w-4 text-yellow-500 hover:cursor-pointer rounded-full' />
+                        <p className="text-sm truncate">
+                        {book.rating}.0
+                        </p>
+                    </div>
                 </div>
             </div>
         </li>
