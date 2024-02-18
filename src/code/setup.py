@@ -109,6 +109,28 @@ dictionary = gensim.corpora.Dictionary(tokens)
 vocabulary = list(dictionary.token2id.keys())
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Get books by token ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+print('⏳ Getting books by token...')
+books_by_token = {}
+
+for element in tokenized_books:
+    isbn = list(element.keys())[0]
+    for item in element[isbn]:
+        if item in books_by_token:
+            books_by_token[item].append(isbn)
+        else:
+            books_by_token[item] = [isbn]
+
+print('⏳ Saving books by token...')
+dest_file = os.path.join(parentDir, '..', 'data', 'books_by_token.json')
+dest_file = os.path.abspath(dest_file)
+with open(dest_file, 'w') as json_file:
+    json.dump(books_by_token, json_file, indent=2)
+print('✅ Success')
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Save users avg rating ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 print('⏳ Starting save users avg ratings...')
 users_ratings = {}
