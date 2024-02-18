@@ -4,10 +4,11 @@ import { Book } from "./types/types";
 import Card from "./Card";
 
 interface Props{
-    title: string
+    title: string,
+    refreshValue: boolean
 }
 
-function Collection({title}: Props) {
+function Collection({title, refreshValue}: Props) {
     const [bookList, setBookList] = useState<Book[]>([]);
 
     useEffect(() => {
@@ -19,7 +20,7 @@ function Collection({title}: Props) {
           .catch(error => {
             console.log(error);
           });
-      }, []);
+      }, [refreshValue]);
       
     return(
         <div className="ml-6 mr-6">

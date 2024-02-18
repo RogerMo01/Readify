@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react'
+import React, { Dispatch, Fragment, SetStateAction, useEffect, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { BookOpenIcon } from '@heroicons/react/24/outline'
 import axios from 'axios'
@@ -8,10 +8,12 @@ import SearchItem from './SearchItem'
 
 interface Props{
   open: boolean,
-  setOpen: (value: boolean) => void
+  setOpen: (value: boolean) => void,
+  refreshValue: boolean,
+  refresher: Dispatch<SetStateAction<boolean>>
 }
 
-export default function UserModal({open, setOpen}: Props) {
+export default function UserModal({open, setOpen, refreshValue, refresher}: Props) {
   const [bookList, setBookList] = useState<Book[]>([]);
   const [query, setQuery] = useState('');
   const [startSearch, setStartSearch] = useState(false);
@@ -50,6 +52,9 @@ export default function UserModal({open, setOpen}: Props) {
       .catch(error => {
         console.log(error);
       });
+    
+    refresher(!refreshValue)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh])
 
 

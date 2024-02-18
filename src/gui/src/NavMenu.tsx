@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import "./NavMenu.css"
 import UserModal from "./UserModal";
 
-function NavMenu() {
+interface Props{
+  refreshValue: boolean,
+  refresher: Dispatch<SetStateAction<boolean>>
+}
+
+function NavMenu({refreshValue, refresher}: Props) {
   const [showModal, setShowModal] = useState(false)
 
   const toggle = () => {setShowModal(!showModal)}
@@ -34,7 +39,7 @@ function NavMenu() {
           </button>
         </nav>
       </header>
-      {showModal && <UserModal open={showModal} setOpen={setShowModal}/> }
+      {showModal && <UserModal open={showModal} setOpen={setShowModal} refreshValue={refreshValue} refresher={refresher}/> }
     </>
   );
 }
