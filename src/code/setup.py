@@ -1,10 +1,12 @@
 import os
 import csv
 import json
+import gensim
+from gensim.parsing.preprocessing import preprocess_string
 
 # Load paths
 parentDir = os.path.dirname(os.path.abspath(__file__))
-    
+
 users_file = os.path.join(parentDir, '..', 'data', 'Users.csv')
 users_file = os.path.abspath(users_file)
 
@@ -15,9 +17,6 @@ ratings_file = os.path.join(parentDir, '..', 'data', 'Ratings.csv')
 ratings_file = os.path.abspath(ratings_file)
 
 ratings = []
-books = []
-
-
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~ Save implicit ratings graph ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,7 +26,7 @@ book_user_list = {}
 
 with open(ratings_file, newline='', encoding='utf-8') as open_ratings_file:
     csv_reader = csv.DictReader(open_ratings_file)
-    
+
     print('⏳ Scanning ratings...')
     for rating in csv_reader:
         user = rating['userID']
@@ -61,6 +60,15 @@ print('✅ Success')
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Text processing ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def custom_preprocess(text):
+    return preprocess_string(text)
+
+tokenized_books = []
+dictionary = {}
+vocabulary = []
+tokens = []
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Save indexed books ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,20 +78,24 @@ indexed_books = {}
 print('⏳ Scanning books...')
 with open(books_file, newline='', encoding='utf-8') as csvfile:
     csv_reader = csv.DictReader(csvfile)
-
+    count = 0
     for book in csv_reader:
-        books.append(book)
-        indexed_books[book['isbn']] = { 'isbn': book['isbn'],
-                                        'bookTitle': book['bookTitle'],
-                                        'bookAuthor': book['bookAuthor'],
-                                        'yearOfPublication': book['yearOfPublication'],
-                                        'publisher': book['publisher'],
-                                        'imageURL_s': book['imageURL_s'],
-                                        'imageURL_m': book['imageURL_m'],
-                                        'imageURL_l': book['imageURL_l'],
-                                        'avgRating': book['avgRating'],
-                                        'countRating': book['countRating'] }
-        
+        indexed_books[book['isbn']] = {'isbn': book['isbn'],
+                                       'bookTitle': book['bookTitle'],
+                                       'bookAuthor': book['bookAuthor'],
+                                       'yearOfPublication': book['yearOfPublication'],
+                                       'publisher': book['publisher'],
+                                       'imageURL_s': book['imageURL_s'],
+                                       'imageURL_m': book['imageURL_m'],
+                                       'imageURL_l': book['imageURL_l'],
+                                       'avgRating': book['avgRating'],
+                                       'countRating': book['countRating']}
+
+        tokenization = custom_preprocess(book['bookTitle'] + " " + book['bookAuthor'])
+        tokenized_books.append({book['isbn']: list(tokenization)})
+        tokens.append(list(tokenization))
+
+
 print('⏳ Saving books...')
 dest_file = os.path.join(parentDir, '..', 'data', 'indexed_books.json')
 dest_file = os.path.abspath(dest_file)
@@ -93,6 +105,8 @@ print('✅ Success')
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+dictionary = gensim.corpora.Dictionary(tokens)
+vocabulary = list(dictionary.token2id.keys())
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Save users avg rating ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,7 +116,7 @@ users_avg_rating = {}
 
 print('⏳ Scanning ratings...')
 for rating in ratings:
-    user  = rating['userID']
+    user = rating['userID']
     bookRating = rating['bookRating']
 
     if bookRating != "0":
@@ -117,7 +131,7 @@ for userID, bookRatings in users_ratings.items():
     else:
         total_sum = sum(bookRatings)
         avg = total_sum / len(bookRatings)
-    
+
     avg = "{:.2f}".format(avg)
 
     users_avg_rating[userID] = avg
@@ -142,7 +156,6 @@ with open(dest_file, 'w') as json_file:
     json.dump(users_avg_rating, json_file, indent=2)
 print('✅ Success')
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 
 print("✅ Set Up successful")
