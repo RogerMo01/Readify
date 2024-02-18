@@ -4,7 +4,7 @@ import csv
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from api.utils import pearson_neighborhood, count_sorter
+from api.utils import pearson_neighborhood, count_sorter, pearson_prediction_sorter
 
 # Runtime loaded data
 all_books_data = []
@@ -106,16 +106,40 @@ def main_recommendation(request):
     ranking_method = config['ranking']
     limit = int(config['limit'])
 
+    # Add user to matrix
+    User = "X"
+    user_ratings = []
+    for b in l1:
+        rat = user_books[b]['rating']
+        if User in explicit_matrix:
+            explicit_matrix[User][b] = rat
+        else:
+            explicit_matrix[User] = {b: rat}
+        user_ratings.append(float(rat))
+
+    # Calculate user avg
+    user_avg = 0
+    if len(user_ratings) > 0:
+        user_avg = sum(user_ratings)/len(user_ratings)
+
+
+    pearson_coefficients = {} #{'userId': coeficient}
+    closest_neigthbors = []
+    
 
     # 📊 Switch on set selection method
     if selection_method == "pearson":
-        selected_set = pearson_neighborhood(l1, l2, l3, explicit_matrix, users_avg_rating, user_books, readers)
+        selected_set, pearson_coefficients, closest_neigthbors = pearson_neighborhood(User, l2, l3, explicit_matrix, users_avg_rating, user_books, readers, user_avg)
     else:
         selected_set = l3
 
+    
 
     # 📉 Switch on ranking method
-    ranked_set = count_sorter(selected_set, readers_count)
+    if ranking_method == "pearson_based_prediction":
+        ranked_set, predictions = pearson_prediction_sorter(selected_set, pearson_coefficients, closest_neigthbors, explicit_matrix, users_avg_rating, user_avg)
+    else:
+        ranked_set = count_sorter(selected_set, readers_count)
     
 
 
@@ -133,11 +157,19 @@ def main_recommendation(request):
         limited_ranked_set = ranked_set
 
 
+
     # Show log
-    print('\n~~~~~~~~ Rank: ~~~~~~~~')
-    for x in limited_ranked_set:
-        print(f'{x} ({readers_count[x]} times)')
+    print('\n~~~~~~~~~~~~~ Rank: ~~~~~~~~~~~~~')
+    if ranking_method == "pearson_based_prediction":
+        for x in limited_ranked_set:
+            print(f'{x} ({round(predictions[x], 2)} rank prediction)')
+    else:
+        for x in limited_ranked_set:
+            print(f'{x} ({readers_count[x]} times)')
     
+    
+    # Delete User from matrix
+    del explicit_matrix[User]
 
     # Map data
     request_response = list(map(lambda x: indexed_books[x], limited_ranked_set))

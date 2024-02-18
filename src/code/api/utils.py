@@ -4,30 +4,32 @@ import math
 def count_sorter(l3, readers_count):
     return list(sorted(l3, key=lambda x: readers_count.get(x, 0), reverse=True))
 
+def pearson_prediction_sorter(books, sim, closest_neigthbors, matrix, avg, user_avg):
+    books_predictions = {}
+    for p in books:
+        acc_up = 0
+        acc_down = 0
+
+        for v in closest_neigthbors:
+            if p in matrix[v]:
+                acc_up += (sim[v] * (float(matrix[v][p]) - float(avg[v])))
+            else:
+                acc_up += 0
+            acc_down += sim[v]
+                
+        pred = user_avg + (acc_up/acc_down)
+
+        books_predictions[p] = pred
+
+    return list(sorted(books, key=lambda x: books_predictions.get(x, 0), reverse=True)), books_predictions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SELECTION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def pearson_neighborhood(l1, l2, l3, explicit_matrix, avg, user_books, readers):
-    User = "X"
-
-    # Add user to matrix
-    user_ratings = []
-    for b in l1:
-        rat = user_books[b]['rating']
-        if User in explicit_matrix:
-            explicit_matrix[User][b] = rat
-        else:
-            explicit_matrix[User] = {b: rat}
-        user_ratings.append(float(rat))
-
-    # Calculate user avg
-    user_avg = 0
-    if len(user_ratings) > 0:
-        user_avg = sum(user_ratings)/len(user_ratings)
-
+def pearson_neighborhood(User, l2, l3, explicit_matrix, avg, user_books, readers, user_avg):
+    
     pearson_coefficients = {} # {'userId': coeficient}
 
     for user in l2:
@@ -47,7 +49,7 @@ def pearson_neighborhood(l1, l2, l3, explicit_matrix, avg, user_books, readers):
 
     print(f'Book reduction by nearby neighbors from {len(l3)} books to {len(available_books)}')
     
-    return available_books
+    return available_books, pearson_coefficients, closest_neigthbors
 
 def sim_Pearson(User, b, matrix, avg, user_avg):
     r_ap_list = []
