@@ -14,7 +14,7 @@ function Card({book}: Props){
 
                     <div className="relative">
 
-                        <img src={book.imageURL_l} className="w-full h-72 object-cover rounded-t-xl" alt=""/>
+                        <img src={book.imageURL_l} className="w-full max-h-[320px] object-cover rounded-t-xl" alt=""/>
                         
                         {/* Tag */}
                         {/* {book.awards.length > 2 && <div className="bottom-0 right-0 mb-2 mr-2 px-2 rounded-lg absolute bg-green-500 text-gray-100 text-xs font-medium">Award winning</div>} */}
