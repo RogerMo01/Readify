@@ -1,4 +1,4 @@
-import { UserBook } from "./types/types";
+import { UserBook } from "../types/types";
 import { StarIcon } from '@heroicons/react/24/solid'
 
 interface Props{

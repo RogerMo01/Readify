@@ -1,17 +1,10 @@
-import { useState } from "react";
-import { Book } from "./types/types";
-import "../public/no_cover_available.jpg"
+import { Book } from "../types/types";
 
 interface Props{
     book: Book
 }
 
 function Card({book}: Props){
-    const [imageLoaded, setImageLoaded] = useState(false);
-
-    const handleImageLoad = () => {
-        setImageLoaded(true);
-    };
     
     return(
         <div className="w-full h-full py-5 flex justify-center items-center">
@@ -21,8 +14,7 @@ function Card({book}: Props){
 
                     <div className="relative">
 
-                        {!imageLoaded && <img src="no_cover_available.jpg" className="w-full h-full object-cover rounded-t-xl" alt=""></img>}
-                        <img src={book.imageURL_l} className="w-full h-72 object-cover rounded-t-xl" alt="" onLoad={handleImageLoad}/>
+                        <img src={book.imageURL_l} className="w-full h-72 object-cover rounded-t-xl" alt=""/>
                         
                         {/* Tag */}
                         {/* {book.awards.length > 2 && <div className="bottom-0 right-0 mb-2 mr-2 px-2 rounded-lg absolute bg-green-500 text-gray-100 text-xs font-medium">Award winning</div>} */}

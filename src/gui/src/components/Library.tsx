@@ -2,7 +2,7 @@ import React, { Dispatch, Fragment, SetStateAction, useEffect, useRef, useState 
 import { Dialog, Transition } from '@headlessui/react'
 import { BookOpenIcon } from '@heroicons/react/24/outline'
 import axios from 'axios'
-import { Book } from './types/types'
+import { Book } from '../types/types'
 import BookView from './BookView'
 import SearchItem from './SearchItem'
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Book } from "./types/types";
+import { Book } from "../types/types";
 import Card from "./Card";
 
 interface Props{

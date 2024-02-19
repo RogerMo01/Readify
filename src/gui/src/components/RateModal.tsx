@@ -3,7 +3,7 @@ import { Fragment, SetStateAction, useState } from 'react'
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import { StarIcon } from '@heroicons/react/24/solid'
 import axios from 'axios'
-import { Book } from './types/types'
+import { Book } from '../types/types'
 
 interface Props{
     book: Book,

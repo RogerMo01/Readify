@@ -1,4 +1,4 @@
-import { Book } from "./types/types";
+import { Book } from "../types/types";
 import { SetStateAction } from "react";
 import RateModal from "./RateModal";
 
