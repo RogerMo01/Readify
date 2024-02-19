@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import "./NavMenu.css"
-import UserModal from "./UserModal";
+import Library from "./Library";
 import Config from "./Config";
 
 interface Props{
@@ -9,14 +9,7 @@ interface Props{
 }
 
 function NavMenu({refreshValue, refresher}: Props) {
-  const [showModal, setShowModal] = useState(false)
-
-  const toggle = () => {setShowModal(!showModal)}
-
-  function handleClick(event: React.MouseEvent): void {
-    console.log(event)
-    toggle();
-  }
+  
 
   return (
     <>
@@ -36,12 +29,10 @@ function NavMenu({refreshValue, refresher}: Props) {
             </a>
           </div>
           <Config refreshValue={refreshValue} refresher={refresher} />
-          <button className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded ml-auto" onClick={handleClick}>
-            My Library
-          </button>
+          <Library refreshValue={refreshValue} refresher={refresher}/> 
+          
         </nav>
       </header>
-      {showModal && <UserModal open={showModal} setOpen={setShowModal} refreshValue={refreshValue} refresher={refresher}/> }
     </>
   );
 }
