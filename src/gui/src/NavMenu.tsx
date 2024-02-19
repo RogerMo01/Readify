@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import "./NavMenu.css"
 import UserModal from "./UserModal";
+import Config from "./Config";
 
 interface Props{
   refreshValue: boolean,
@@ -34,6 +35,7 @@ function NavMenu({refreshValue, refresher}: Props) {
               />
             </a>
           </div>
+          <Config refreshValue={refreshValue} refresher={refresher} />
           <button className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded ml-auto" onClick={handleClick}>
             My Library
           </button>

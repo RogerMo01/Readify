@@ -223,3 +223,23 @@ def add_book_to_user(request):
         return Response({'message': "OK"})
     except Exception as e:
         return Response({'message': str(e)}, status=400)
+    
+@api_view(['GET'])
+def get_config(request):
+    # Load configuration
+    with open(config_path, 'r') as config_file:
+        config = json.load(config_file)
+    return Response(config)
+
+@api_view(['POST'])
+def set_config(request):
+    try:
+        new_config = json.loads(request.body.decode('utf-8'))
+
+        # Save json
+        with open(config_path, 'w') as config_file:
+            json.dump(new_config, config_file, indent=2)
+
+        return Response({'message': "OK"})
+    except Exception as e:
+        return Response({'message': str(e)}, status=400)
