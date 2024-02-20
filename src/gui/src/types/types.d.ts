@@ -11,3 +11,10 @@ export interface Book{
     avgRating: string,
     countRating: string
 }
+
+export interface UserBook{
+    rating: string,
+    title: string,
+    author: string,
+    cover: string
+}

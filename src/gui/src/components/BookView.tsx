@@ -20,7 +20,7 @@ function BookView({book}:Props){
                     {book.author}
                     </p>
                     <div className="flex flex-row">
-                        <StarIcon className='h-5 w-4 text-yellow-500 hover:cursor-pointer rounded-full' />
+                        <StarIcon className='h-5 w-4 text-yellow-500 rounded-full' />
                         <p className="text-sm truncate">
                         {book.rating}.0
                         </p>
