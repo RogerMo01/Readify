@@ -32,6 +32,9 @@ book_user_list_path = os.path.abspath(book_user_list_path)
 indexed_books_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'indexed_books.json')
 indexed_books_path = os.path.abspath(indexed_books_path)
 
+books_by_word_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'books_by_word.json')
+books_by_word_path = os.path.abspath(books_by_word_path)
+
 
 # Start load
 print("⏳ Load started")
@@ -53,6 +56,8 @@ with open(book_user_list_path, 'r') as book_user_list_file:
     book_user_list = json.load(book_user_list_file)
 with open(indexed_books_path, 'r') as indexed_books_file:
     indexed_books = json.load(indexed_books_file)
+with open(books_by_word_path, 'r') as books_by_word_file:
+    books_by_word = json.load(books_by_word_file)
 print("✅ Load end")
 
 
