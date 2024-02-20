@@ -1,8 +1,11 @@
 import os
 import csv
 import json
-import gensim
-from gensim.parsing.preprocessing import preprocess_string
+import nltk
+from nltk.corpus import stopwords
+
+nltk.download('stopwords')
+
 
 # Load paths
 parentDir = os.path.dirname(os.path.abspath(__file__))
@@ -60,20 +63,12 @@ print('✅ Success')
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Text processing ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def custom_preprocess(text):
-    return preprocess_string(text)
-
-tokenized_books = []
-dictionary = {}
-vocabulary = []
-tokens = []
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Save indexed books ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 print('⏳ Starting save book indexed json...')
 indexed_books = {}
+books_by_word = {}
+
+stop_words = set(stopwords.words('english'))
 
 print('⏳ Scanning books...')
 with open(books_file, newline='', encoding='utf-8') as csvfile:
@@ -91,9 +86,14 @@ with open(books_file, newline='', encoding='utf-8') as csvfile:
                                        'avgRating': book['avgRating'],
                                        'countRating': book['countRating']}
 
-        tokenization = custom_preprocess(book['bookTitle'] + " " + book['bookAuthor'])
-        tokenized_books.append({book['isbn']: list(tokenization)})
-        tokens.append(list(tokenization))
+        for word in (
+            book['bookTitle'] + " " + book['bookAuthor']).split():
+            word_lower = word.lower()
+            if word_lower not in stop_words and word_lower.isalpha():
+                if word_lower in books_by_word:
+                    books_by_word[word_lower].append(book['isbn'])
+                else:
+                    books_by_word[word_lower] = [book['isbn']]
 
 
 print('⏳ Saving books...')
@@ -104,31 +104,14 @@ with open(dest_file, 'w') as json_file:
 print('✅ Success')
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-dictionary = gensim.corpora.Dictionary(tokens)
-vocabulary = list(dictionary.token2id.keys())
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Get books by token ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-print('⏳ Getting books by token...')
-books_by_token = {}
-
-for element in tokenized_books:
-    isbn = list(element.keys())[0]
-    for item in element[isbn]:
-        if item in books_by_token:
-            books_by_token[item].append(isbn)
-        else:
-            books_by_token[item] = [isbn]
-
-print('⏳ Saving books by token...')
-dest_file = os.path.join(parentDir, '..', 'data', 'books_by_token.json')
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+print('⏳ Saving books by word...')
+dest_file = os.path.join(parentDir, '..', 'data', 'books_by_word.json')
 dest_file = os.path.abspath(dest_file)
 with open(dest_file, 'w') as json_file:
-    json.dump(books_by_token, json_file, indent=2)
+    json.dump(books_by_word, json_file, indent=2)
 print('✅ Success')
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Save users avg rating ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
