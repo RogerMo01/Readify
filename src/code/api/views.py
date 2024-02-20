@@ -4,7 +4,7 @@ import csv
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from api.utils import graph_search, pearson_neighborhood, count_sorter, pearson_prediction_sorter
+from api.utils import graph_search, pearson_neighborhood, count_sorter, pearson_prediction_sorter, log
 
 # Runtime loaded data
 User = "X"
@@ -43,6 +43,9 @@ users_avg_rating_path = os.path.abspath(users_avg_rating_path)
 
 config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'config.json')
 config_path = os.path.abspath(config_path)
+
+log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'log.txt')
+log_path = os.path.abspath(log_path)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Load runtime variables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,6 +101,7 @@ def load_configuration():
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Recommendation APIs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @api_view(['GET'])
 def main_recommendation(request):
+    log('\n\n\n[----------------- GET -----------------]')
     # Main books recommender function
     l1, l2, l3, readers, readers_count = graph_search(user_books, book_user_list, user_book_list)
 
@@ -142,13 +146,13 @@ def main_recommendation(request):
 
 
     # Show log
-    print('\n~~~~~ Main recommendation Rank: ~~~~~')
+    log('\n[*] Rank results:')
     if ranking_method == "pearson_based_prediction":
         for x in limited_ranked_set:
-            print(f'{x} ({round(predictions[x], 2)} rank prediction)')
+            log(f'isbn: {x} ({round(predictions[x], 2)} rank prediction)')
     else:
         for x in limited_ranked_set:
-            print(f'{x} ({readers_count[x]} times)')
+            log(f'isbn: {x} ({readers_count[x]} times)')
     
     
     # Delete User from matrix

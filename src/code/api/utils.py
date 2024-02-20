@@ -1,4 +1,5 @@
 import math
+import os
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SEARCH ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def graph_search(user_books, book_user_list, user_book_list, show_log=True):
@@ -22,9 +23,10 @@ def graph_search(user_books, book_user_list, user_book_list, show_log=True):
                     readers_count[b2] = 0
     
     if show_log:
-        print(f'User spread to {len(l1)} books')
-        print(f'l1 spread to {len(l2)} neighbors')
-        print(f'l2 spread to {len(l3)} recommended books')
+        log('\n[*] Graph search results:')
+        log(f'User spread to {len(l1)} books')
+        log(f'l1 spread to {len(l2)} neighbors')
+        log(f'l2 spread to {len(l3)} recommended books')
     
     return l1, l2, l3, readers, readers_count
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,8 +80,9 @@ def pearson_neighborhood(User, l2, l3, explicit_matrix, avg, user_books, readers
                 break
 
     if show_log:
-        print(f'Neigthbors with Pearson coefficient grater than 0: {len(closest_neigthbors)}')
-        print(f'Book reduction by nearby neighbors from {len(l3)} books to {len(available_books)}')
+        log('\n[*] Pearson coefficient results:')
+        log(f'Neigthbors with Pearson coefficient grater than 0: {len(closest_neigthbors)}')
+        log(f'Book reduction by nearby neighbors from {len(l3)} books to {len(available_books)}')
     
     return available_books, pearson_coefficients, closest_neigthbors
 
@@ -110,3 +113,11 @@ def sim_Pearson(User, b, matrix, avg, user_avg):
     return up/(down)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'log.txt')
+log_path = os.path.abspath(log_path)
+
+def log(log):
+    with open(log_path, 'a') as file:
+        file.write(log + '\n')

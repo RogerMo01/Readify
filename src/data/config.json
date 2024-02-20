@@ -1,5 +1,5 @@
 {
-  "selection": "all",
-  "ranking": "count",
+  "selection": "pearson",
+  "ranking": "pearson_based_prediction",
   "limit": "10"
 }
