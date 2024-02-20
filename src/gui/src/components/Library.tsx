@@ -64,32 +64,6 @@ export default function Library({refreshValue, refresher}: Props) {
   }, [refresh])
 
 
-  // Load user book info
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // Array para almacenar las promesas de las consultas
-  //       const promises = userBooks.map(async (book) => {
-  //         const response = await axios.get<Book>(`tu_url_de_consulta/${book[0]}`);
-  //         const current = userBooksInfo;
-  //         current.push(response.data);  
-
-  //         setUserBooksInfo(current)
-  //       });
-
-  //       // Ejecutar todas las consultas de forma simultánea
-  //       await Promise.all(promises);
-  //     } catch (error) {
-  //       console.error('Error al realizar las consultas:', error);
-  //     }
-  //   };
-
-  //   // Llama a la función fetchData cuando cambie userBooks
-  //   fetchData();
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [userBooks]);
-
-
   // Filter search result
   useEffect(() => {
     const filteredList = bookList.filter(b => !userBooks.some(userBook => userBook[0] === b.isbn))

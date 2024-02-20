@@ -11,10 +11,3 @@ export interface Book{
     avgRating: string,
     countRating: string
 }
-
-export interface UserBook{
-    rating: "0.0",
-    title: "Flesh Tones: A Novel",
-    author: "M. J. Rose"
-    cover: "http://images.amazon.com/images/P/034545104X.01.THUMBZZZ.jpg"
-}
