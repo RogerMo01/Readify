@@ -4,15 +4,15 @@ import csv
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from api.utils import pearson_neighborhood, count_sorter, pearson_prediction_sorter
+from api.utils import graph_search, pearson_neighborhood, count_sorter, pearson_prediction_sorter
 
 # Runtime loaded data
+User = "X"
 all_books_data = []
 indexed_books = {}
 user_books = {}
 user_book_list = {}
 book_user_list = {}
-l3 = set([])
 readers = {}
 readers_count = {}
 explicit_matrix = {}
@@ -45,12 +45,11 @@ config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..
 config_path = os.path.abspath(config_path)
 
 
-# Start load
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Load runtime variables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 print("⏳ Load started")
 with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
     csv_reader = csv.DictReader(csvfile)
     all_books_data = list(csv_reader)
-
 try:
     with open(user_books_path, 'r') as user_books_file:
         user_books = json.load(user_books_file)
@@ -58,7 +57,6 @@ except:
     user_books = {}
     with open(user_books_path, 'w') as user_books_file:
         json.dump(user_books, user_books_file, indent=2)
-
 with open(user_book_list_path, 'r') as user_book_list_file:
     user_book_list = json.load(user_book_list_file)
 with open(book_user_list_path, 'r') as book_user_list_file:
@@ -70,44 +68,12 @@ with open(explicit_matrix_path, 'r') as explicit_matrix_file:
 with open(users_avg_rating_path, 'r') as users_avg_rating_file:
     users_avg_rating = json.load(users_avg_rating_file)
 print("✅ Load end")
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
-@api_view(['GET'])
-def main_recommendation(request):
-    # Main books recommender function
-    
-    readers = {}
-    readers_count = {}
-    l1 = list(map(lambda x : x[0], user_books.items()))
-    l2 = set([])
 
-    # Graph Search
-    for b in l1:
-        for u in book_user_list[b]:
-            l2.add(u)
-            for b2 in user_book_list[u]:
-                try:
-                    readers[b2].append(u)
-                    readers_count[b2]+=1
-                except:
-                    l3.add(b2)
-                    readers[b2] = [u]
-                    readers_count[b2] = 0
-
-    print(f'User spread to {len(l1)} books')
-    print(f'l1 spread to {len(l2)} neighbors')
-    print(f'l2 spread to {len(l3)} recommended books')
-
-    # Load configuration
-    with open(config_path, 'r') as config_file:
-        config = json.load(config_file)
-    selection_method = config['selection']
-    ranking_method = config['ranking']
-    limit = int(config['limit'])
-
-    # Add user to matrix
-    User = "X"
+def add_user_to_matrix(l1):
     user_ratings = []
     for b in l1:
         rat = user_books[b]['rating']
@@ -116,12 +82,35 @@ def main_recommendation(request):
         else:
             explicit_matrix[User] = {b: rat}
         user_ratings.append(float(rat))
+    return user_ratings
+
+def load_configuration():
+    with open(config_path, 'r') as config_file:
+        config = json.load(config_file)
+    selection_method = config['selection']
+    ranking_method = config['ranking']
+    limit = int(config['limit'])
+    return selection_method, ranking_method, limit
+
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Recommendation APIs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@api_view(['GET'])
+def main_recommendation(request):
+    # Main books recommender function
+    l1, l2, l3, readers, readers_count = graph_search(user_books, book_user_list, user_book_list)
+
+    # Load configuration
+    selection_method, ranking_method, limit = load_configuration()
+
+    # Add user to matrix
+    user_ratings = add_user_to_matrix(l1)
 
     # Calculate user avg
     user_avg = 0
     if len(user_ratings) > 0:
         user_avg = sum(user_ratings)/len(user_ratings)
-
 
     pearson_coefficients = {} #{'userId': coeficient}
     closest_neigthbors = []
@@ -132,7 +121,6 @@ def main_recommendation(request):
         selected_set, pearson_coefficients, closest_neigthbors = pearson_neighborhood(User, l2, l3, explicit_matrix, users_avg_rating, user_books, readers, user_avg)
     else:
         selected_set = l3
-
     
 
     # 📉 Switch on ranking method
@@ -142,24 +130,19 @@ def main_recommendation(request):
         ranked_set = count_sorter(selected_set, readers_count)
     
 
-
     # 🔚 Switch on rank limit
     limited_ranked_set = []
-    if len(ranked_set) > limit:
-        c = 0
-        for b in ranked_set:
-            if c == limit:
-                break
-            elif b not in user_books:
-                limited_ranked_set.append(b)
-                c+=1
-    else:
-        limited_ranked_set = ranked_set
-
+    c = 0
+    for b in ranked_set:
+        if c == limit:
+            break
+        elif b not in user_books and b in indexed_books:
+            limited_ranked_set.append(b)
+            c+=1
 
 
     # Show log
-    print('\n~~~~~~~~~~~~~ Rank: ~~~~~~~~~~~~~')
+    print('\n~~~~~ Main recommendation Rank: ~~~~~')
     if ranking_method == "pearson_based_prediction":
         for x in limited_ranked_set:
             print(f'{x} ({round(predictions[x], 2)} rank prediction)')
@@ -169,7 +152,8 @@ def main_recommendation(request):
     
     
     # Delete User from matrix
-    del explicit_matrix[User]
+    if User in explicit_matrix:
+        del explicit_matrix[User]
 
     # Map data
     request_response = list(map(lambda x: indexed_books[x], limited_ranked_set))
@@ -177,6 +161,89 @@ def main_recommendation(request):
     return Response({'data': request_response})
 
 
+@api_view(['GET'])
+def author_recommendation(request):
+    response = {
+        'author': "",
+        'list': []
+    }
+
+    if len(list(user_books.items())) == 0:
+        Response(response)
+
+    listed_user_books = list(user_books.items())
+    
+    user_ratings_by_author = {}
+    for _, i in listed_user_books:
+        if i['author'] in user_ratings_by_author:
+            user_ratings_by_author[i['author']].append(float(i["rating"]))
+        else:
+            user_ratings_by_author[i['author']] = [float(i["rating"])]
+
+    maxAuthor = ""
+    maxAvg = 0
+    for a, l in list(user_ratings_by_author.items()):
+        avg = sum(l)/len(l)
+        if avg > maxAvg:
+            maxAvg = avg
+            maxAuthor = a
+
+    l1, l2, l3, readers, readers_count = graph_search(user_books, book_user_list, user_book_list, False)
+
+    # Load configuration
+    selection_method, ranking_method, limit = load_configuration()
+    
+    # Add user to matrix
+    user_ratings = add_user_to_matrix(l1)
+
+    # Calculate user avg
+    user_avg = 0
+    if len(user_ratings) > 0:
+        user_avg = sum(user_ratings)/len(user_ratings)
+
+
+    # 📊 Switch on set selection method
+    if selection_method == "pearson":
+        selected_set, pearson_coefficients, closest_neigthbors = pearson_neighborhood(User, l2, l3, explicit_matrix, users_avg_rating, user_books, readers, user_avg, False)
+    else:
+        selected_set = l3
+
+
+    # 📉 Switch on ranking method
+    if ranking_method == "pearson_based_prediction":
+        ranked_set, predictions = pearson_prediction_sorter(selected_set, pearson_coefficients, closest_neigthbors, explicit_matrix, users_avg_rating, user_avg)
+    else:
+        ranked_set = count_sorter(selected_set, readers_count)
+    
+
+    # 🔚 Switch on rank limit
+    limited_ranked_set = []
+    c = 0
+    for b in ranked_set:
+        if c == limit:
+            break
+        elif b not in user_books and b in indexed_books and indexed_books[b]['bookAuthor'] == maxAuthor:
+            limited_ranked_set.append(b)
+            c+=1
+    
+    # Delete User from matrix
+    if User in explicit_matrix:
+        del explicit_matrix[User]
+
+    # Map data
+    request_list = list(map(lambda x: indexed_books[x], limited_ranked_set))
+
+    response = {
+        'author': maxAuthor,
+        'list': request_list
+    }
+
+    return Response(response)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Other APIs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @api_view(['GET'])
 def filter_books(request):
     # Search for user query
@@ -243,3 +310,4 @@ def set_config(request):
         return Response({'message': "OK"})
     except Exception as e:
         return Response({'message': str(e)}, status=400)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

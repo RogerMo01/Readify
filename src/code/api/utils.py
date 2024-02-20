@@ -1,5 +1,37 @@
 import math
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SEARCH ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def graph_search(user_books, book_user_list, user_book_list, show_log=True):
+    readers = {}
+    readers_count = {}
+    l1 = list(map(lambda x : x[0], user_books.items()))
+    l2 = set([])
+    l3 = set([])
+
+    # Graph Search
+    for b in l1:
+        for u in book_user_list[b]:
+            l2.add(u)
+            for b2 in user_book_list[u]:
+                try:
+                    readers[b2].append(u)
+                    readers_count[b2]+=1
+                except:
+                    l3.add(b2)
+                    readers[b2] = [u]
+                    readers_count[b2] = 0
+    
+    if show_log:
+        print(f'User spread to {len(l1)} books')
+        print(f'l1 spread to {len(l2)} neighbors')
+        print(f'l2 spread to {len(l3)} recommended books')
+    
+    return l1, l2, l3, readers, readers_count
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ RANKING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def count_sorter(l3, readers_count):
     return list(sorted(l3, key=lambda x: readers_count.get(x, 0), reverse=True))
@@ -28,7 +60,7 @@ def pearson_prediction_sorter(books, sim, closest_neigthbors, matrix, avg, user_
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SELECTION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def pearson_neighborhood(User, l2, l3, explicit_matrix, avg, user_books, readers, user_avg):
+def pearson_neighborhood(User, l2, l3, explicit_matrix, avg, user_books, readers, user_avg, show_log=True):
     
     pearson_coefficients = {} # {'userId': coeficient}
 
@@ -38,8 +70,6 @@ def pearson_neighborhood(User, l2, l3, explicit_matrix, avg, user_books, readers
 
     closest_neigthbors = [key for key, value in list(pearson_coefficients.items()) if value > 0]
 
-    print(f'Neigthbors with Pearson coefficient grater than 0: {len(closest_neigthbors)}')
-
     available_books = []
     for b in l3:
         for r in readers[b]:
@@ -47,7 +77,9 @@ def pearson_neighborhood(User, l2, l3, explicit_matrix, avg, user_books, readers
                 available_books.append(b)
                 break
 
-    print(f'Book reduction by nearby neighbors from {len(l3)} books to {len(available_books)}')
+    if show_log:
+        print(f'Neigthbors with Pearson coefficient grater than 0: {len(closest_neigthbors)}')
+        print(f'Book reduction by nearby neighbors from {len(l3)} books to {len(available_books)}')
     
     return available_books, pearson_coefficients, closest_neigthbors
 

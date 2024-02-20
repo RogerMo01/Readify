@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
-import Collection from './components/Collection'
 import NavMenu from './components/NavMenu'
+import CollectionGroup from './components/CollectionGroup';
 
 function App() {
   const [refresh, setRefresh] = useState(false);
@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <NavMenu refreshValue={refresh} refresher={setRefresh}/>
-      <Collection refreshValue={refresh} title='Suggested for you'/>
+      <CollectionGroup refreshValue={refresh}/>
     </>
   )
 }

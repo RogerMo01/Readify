@@ -16,7 +16,7 @@ export default function Library({refreshValue, refresher}: Props) {
   const [query, setQuery] = useState('');
   const [startSearch, setStartSearch] = useState(false);
   const [userBooks, setUserBooks] = useState([]);
-  const [userBooksInfo, setUserBooksInfo] = useState<Book[]>([]);
+  // const [userBooksInfo, setUserBooksInfo] = useState<Book[]>([]);
   const cancelButtonRef = useRef(null)
   
   const [refresh, setRefresh] = useState(false);
@@ -65,29 +65,29 @@ export default function Library({refreshValue, refresher}: Props) {
 
 
   // Load user book info
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Array para almacenar las promesas de las consultas
-        const promises = userBooks.map(async (book) => {
-          const response = await axios.get<Book>(`tu_url_de_consulta/${book[0]}`);
-          const current = userBooksInfo;
-          current.push(response.data);  
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       // Array para almacenar las promesas de las consultas
+  //       const promises = userBooks.map(async (book) => {
+  //         const response = await axios.get<Book>(`tu_url_de_consulta/${book[0]}`);
+  //         const current = userBooksInfo;
+  //         current.push(response.data);  
 
-          setUserBooksInfo(current)
-        });
+  //         setUserBooksInfo(current)
+  //       });
 
-        // Ejecutar todas las consultas de forma simultánea
-        await Promise.all(promises);
-      } catch (error) {
-        console.error('Error al realizar las consultas:', error);
-      }
-    };
+  //       // Ejecutar todas las consultas de forma simultánea
+  //       await Promise.all(promises);
+  //     } catch (error) {
+  //       console.error('Error al realizar las consultas:', error);
+  //     }
+  //   };
 
-    // Llama a la función fetchData cuando cambie userBooks
-    fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userBooks]);
+  //   // Llama a la función fetchData cuando cambie userBooks
+  //   fetchData();
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [userBooks]);
 
 
   // Filter search result
