@@ -134,7 +134,7 @@ Dadas las predicciones para todos los libros de $l3$, podemos ordenarlos, y ese 
 
 ## El flujo:
 
-Partamos de una selección mínima para el conjunto de gustos del usuario. Para ello hemos preestablecido una calificación de 10 al libro: *Harry Potter and the Chamber of Secrets (Book 2)*.
+Partamos de una selección inicial para el conjunto de gustos del usuario. Para ello hemos preestablecido una calificación de 10 al libro: *Harry Potter and the Chamber of Secrets (Book 2)*, y *Flesh Tones: A Novel* calificada con 8.
 
 
 

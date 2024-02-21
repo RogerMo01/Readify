@@ -110,7 +110,7 @@ def sim_Pearson(User, b, matrix, avg, user_avg):
         acc_r += (r_bp_list[i] - float(avg[b]))**2
 
     down = math.sqrt(acc_l) + math.sqrt(acc_r)
-    return up/(down)
+    return up/(down + 0.000000000001)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -312,7 +312,7 @@ def filter_books(request):
 
     count = 0
     for isbn in descending_sorted_dictionary.keys():
-        if count == 30:
+        if count == 50:
             break
         if isbn not in ub:
             final_answer.append(indexed_books[isbn])
