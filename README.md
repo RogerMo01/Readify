@@ -60,7 +60,7 @@ npm run dev
 
 Una vez iniciados ambos servidores se puede acceder desde el navegador a la interfaz web por la dirección que se muestra en la terminal del servidor de React.
 
-<!-- Las acciones anteriores se resumieron en un archivo ejecutable en la raiz del proyecto. Para **Mac** o **Linux** el archivo `startup.sh` y para **Windows** `startup.bat` -->
+> Las acciones anteriores se resumieron en un archivo ejecutable en la raiz del proyecto. Para **Mac** o **Linux** el archivo `startup.sh` y para **Windows** `startup.bat`
 
 
 
@@ -80,7 +80,7 @@ En el directorio `.../src/data` se encuentran los datos fundamentales para el fu
 
 `Ratings.csv`: Es un registro de calificaciones de los libros, cada fila contiene el rating otorgado por un usuario a un libro, ya sea de forma explícita expresado en una escala de 1-10, o de forma implícita con un 0.
 
-<!--En Teoría de la recomendación, las calificaciones explícitas son probablemente las más precisas, pero su desventaja es el esfuerzo extra que requieren del usuario. POr otro lado las calificaciones implícitas pueden recopilarse en un mayor volumen y sin la intervención del usuario, pero no se puede asegurar que el comportamiento del usuario es correctamente interpretado-->
+> En Teoría de la recomendación, las calificaciones explícitas son probablemente las más precisas, pero su desventaja es el esfuerzo extra que requieren del usuario. POr otro lado las calificaciones implícitas pueden recopilarse en un mayor volumen y sin la intervención del usuario, pero no se puede asegurar que el comportamiento del usuario es correctamente interpretado
 
 
 
