@@ -33,9 +33,12 @@ export default function Library({refreshValue, refresher}: Props) {
   // Ask for search query
   useEffect(() => {
     console.log("Trim = " + query.trim());
+    const request = { 'query': query }
 
     if (query.trim() !== '') {
-      axios.get('http://localhost:8000/api/filter-books')
+      axios.get('http://localhost:8000/api/filter-books', {
+        params: request
+      })
         .then(response => {
           setBookList(response.data.data);
           console.log(`Received: ${response.data.data}`)
@@ -73,8 +76,7 @@ export default function Library({refreshValue, refresher}: Props) {
   
 
 
-  function handleSearch(event: React.MouseEvent): void {
-    console.log(event)
+  function handleSearch(): void {
     setStartSearch(!startSearch)
   }
 

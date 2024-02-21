@@ -205,7 +205,7 @@ def author_recommendation(request):
         if i['author'] in user_ratings_by_author:
             user_ratings_by_author[i['author']].append(float(i["rating"]))
         else:
-            user_ratings_by_author[i['author']] = [float(i["rating"])]
+             user_ratings_by_author[i['author']] = [float(i["rating"])]
 
     maxAuthor = ""
     maxAvg = 0
@@ -274,7 +274,8 @@ def author_recommendation(request):
 @api_view(['GET'])
 def filter_books(request):
     # Search for user query
-    query = 'classical potter'
+
+    query = request.GET.get('query', '')
     if not query:
         return Response({'data': final_answer})
     split_query = query.lower().split()
