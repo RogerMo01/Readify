@@ -163,4 +163,38 @@ print('✅ Success')
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+
+# ~~~~~~~~~~~~~~~~~~~~~~~ Save user's explicit ratings for books ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+print("⏳ Starting save explicit user's ratings ...")
+
+explicit_user_book_rating_matrix = {}
+
+print('⏳ Scanning ratings...')
+for rating in ratings:
+    user = rating['userID']
+    book = rating['isbn']
+    bookRating = rating['bookRating']
+
+    if bookRating == "0": # Skip implicit ratings
+        continue
+
+    if user in explicit_user_book_rating_matrix:
+        explicit_user_book_rating_matrix[user][book] = bookRating    #already have a rated book
+    else:
+        explicit_user_book_rating_matrix[user] = {book: bookRating}
+print('✅ Success')
+
+
+print('⏳ Saving explicit ratings matrix...')
+dest_file = os.path.join(parentDir, '..', 'data', 'explicit_ratings_matrix.json')
+dest_file = os.path.abspath(dest_file)
+
+with open(dest_file, 'w') as json_file:
+    json.dump(explicit_user_book_rating_matrix, json_file, indent=2)
+print('✅ Success')
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
 print("✅ Set Up successful")

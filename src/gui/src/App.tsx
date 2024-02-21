@@ -1,13 +1,15 @@
+import { useState } from 'react'
 import './App.css'
-import Collection from './Collection'
-import NavMenu from './NavMenu'
+import NavMenu from './components/NavMenu'
+import CollectionGroup from './components/CollectionGroup';
 
 function App() {
+  const [refresh, setRefresh] = useState(false);
 
   return (
     <>
-      <NavMenu/>
-      <Collection title='Suggested for you'/>
+      <NavMenu refreshValue={refresh} refresher={setRefresh}/>
+      <CollectionGroup refreshValue={refresh}/>
     </>
   )
 }

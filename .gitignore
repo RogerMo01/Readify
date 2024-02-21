@@ -1,3 +1,11 @@
+# User specified
+src/data/book_user_list.json
+src/data/explicit_ratings_matrix.json
+src/data/user_book_list.json
+src/data/indexed_books.json
+src/data/users_avg_rating.json
+src/data/log.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
