@@ -10,7 +10,8 @@ from nltk.corpus import stopwords
 
 nltk.download('stopwords')
 
-stop_words = set(stopwords.words('english'))
+stop_words_english = set(stopwords.words('english'))
+stop_words_spanish = set(stopwords.words('spanish'))
 
 
 # Runtime loaded data
@@ -130,31 +131,50 @@ def main_recommendation(request):
 @api_view(['GET'])
 def filter_books(request):
     # Search for user query
-    query = 'Azkaban'
+    query = 'classical potter'
+    if not query:
+        return Response({'data': final_answer})
+    split_query = query.lower().split()
 
+    final_answer = []
     books = []
 
-    for item in query.split():
-        item_lower = item.lower()
-        if item_lower not in stop_words and item_lower.isalpha():
-            (word_end, isbn_books) = trie.search(item_lower)
+    for item in split_query:
+        if item not in stop_words_english and item not in stop_words_spanish and item.isalpha():
+            (word_end, isbn_books) = trie.search(item)
             if word_end:
                 books.append(isbn_books)
 
     if books:
-        intersection_books = set.intersection(*map(set, books))
+        union_books = set.union(*map(set, books))
     else:
-        intersection_books = set()
+        union_books = set()
 
-    response = []
+    response = {}
+    if len(union_books) != 0:
+        for isbn in union_books:
+            book = indexed_books[isbn]
+            word_counter = 0
+            split_title = book['bookTitle'].lower().split()
+            for item in split_query:
+                if item in split_title:
+                    word_counter += 1
+            response[isbn] = word_counter
+
+    descending_sorted_dictionary = {k: v for k, v in sorted(
+        response.items(), key=lambda item: item[1], reverse=True)}
+
     ub = list(user_books.keys())
 
-    for isbn in intersection_books:
+    count = 0
+    for isbn in descending_sorted_dictionary.keys():
+        if count == 30:
+            break
         if isbn not in ub:
-            response.append(indexed_books[isbn])
+            final_answer.append(indexed_books[isbn])
+            count += 1
 
-    
-    return Response({'data': response})
+    return Response({'data': final_answer})
 
 
 @api_view(['GET'])
