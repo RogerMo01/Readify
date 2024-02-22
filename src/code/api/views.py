@@ -275,13 +275,13 @@ def author_recommendation(request):
 def filter_books(request):
     # Search for user query
 
+    final_answer = []
+    books = []
+
     query = request.GET.get('query', '')
     if not query:
         return Response({'data': final_answer})
     split_query = query.lower().split()
-
-    final_answer = []
-    books = []
 
     for item in split_query:
         if item not in stop_words_english and item not in stop_words_spanish and item.isalpha():
@@ -299,12 +299,12 @@ def filter_books(request):
         for isbn in union_books:
             book = indexed_books[isbn]
             word_counter = 0
-            split_title = book['bookTitle'].lower().split()
+            title_author = book['bookTitle'].lower().split()  + " " + book['bookAuthor'].lower().split()
             for item in split_query:
-                if item in split_title:
+                if item in title_author:
                     word_counter += 1
             response[isbn] = word_counter
-
+    
     descending_sorted_dictionary = {k: v for k, v in sorted(
         response.items(), key=lambda item: item[1], reverse=True)}
 
