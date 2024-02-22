@@ -299,7 +299,7 @@ def filter_books(request):
         for isbn in union_books:
             book = indexed_books[isbn]
             word_counter = 0
-            title_author = book['bookTitle'].lower().split()  + " " + book['bookAuthor'].lower().split()
+            title_author = (book['bookTitle'].lower()  + " " + book['bookAuthor'].lower()).split()
             for item in split_query:
                 if item in title_author:
                     word_counter += 1
