@@ -1,6 +1,6 @@
 # Readify
 
-Readify es un sistema de recomendación de libros que constituye el *Proyecto Investigativo* de la asignatura: *Sistemas de Recuperación de Información* de la carrera de *Ciencias de la Computación*, de la *Universidad de la Habana*, . Cuenta con una base de datos de *271360* libros obtenidos de "*Amazon Web Services*", y recopilados en [kaggle](https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset/data), una comunidad de IA y Machine Learning que provee conjuntos de datos para varios temas de proyectos. El objetivo es tomar un conjunto de libros que el usuario ha leído y calificado, y a partir de este se le recomiendan otros libros que pueden interesarle. 
+Readify es un sistema de recomendación de libros que constituye el *Proyecto Investigativo* de la asignatura: *Sistemas de Recuperación de Información* de la carrera de *Ciencias de la Computación*, de la *Universidad de la Habana*, . Cuenta con una base de datos de $271360$ libros obtenidos de "*Amazon Web Services*", y recopilados en [kaggle](https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset/data), una comunidad de IA y Machine Learning que provee conjuntos de datos para varios temas de proyectos. El objetivo es tomar un conjunto de libros que el usuario ha leído y calificado, y a partir de este se le recomiendan otros libros que pueden interesarle. 
 
 
 
@@ -70,8 +70,6 @@ Una vez iniciados ambos servidores se puede acceder desde el navegador a la inte
 
 En el directorio `.../src/data` se encuentran los datos fundamentales para el funcionamiento del proyecto.
 
-
-
 ### Dataset:
 
 `Books.csv`: Contiene $271360$ libros, de los cuales se tiene información como su identificador ISBN, el título, el autor, el año de su publicación, la editora que lo publica, el URL de imágenes de la portada en varios tamaños, el promedio de puntuación basada en usuarios, y la cantidad de puntuaciones.
@@ -99,6 +97,8 @@ En el directorio `.../src/data` se encuentran los datos fundamentales para el fu
 `user_books.json`: Contiene información de los ratings del usuario de la app a los libros, es el conjunto de datos a partir del cual se hace la recomendación personalizada.
 
 `users_avg_rating.json`: Almacena el rating promedio de cada usuario de la base de datos.
+
+`books_by_word.json`: Almacena por cada palabra del corpus de búsqueda (Títulos y Autores), los libros en los que aparecen.
 
 
 
@@ -154,7 +154,7 @@ La colección ***More from {AUTHOR}*** muestra una lista de recomendación que t
 
 ### Estructura del servidor:
 
-En el archivo `setup.py` se realiza un análisis del conjunto de datos inicial, creando varios archivos json donde se guarda información que hace más eficiente el procesamiento de las recomendaciones. 
+En el archivo `setup.py` se realiza un análisis del conjunto de datos inicial, creando varios archivos json donde se guarda información que hace más eficiente el procesamiento de las recomendaciones y búsquedas.
 
 El directorio `.../src/code/api` contiene la aplicación de Django que mantiene una conexión entre el servidor y la interfaz web. Dentro de este directorio se encuentra el archivo `views.py`, este es el encargado de contener las APIs que escuchan solicitudes http. Inicialmente en este archivo se cargan los datos en variables de que se utilizarán para responder las peticiones. Luego tenemos las dos funciones que responden a las solicitudes de ambas colecciones.
 
@@ -168,9 +168,24 @@ def author_recommendation(request):
 
  El flujo básico de estas determina los conjuntos $l1$, $l2$ y $l3$. En dependencia de la configuración que se tenga se selecciona un subconjunto de $l3$ y se ordenan los resultados, pasando a devolver una lista de estos. En particular la segunda función elige el autor favorito del usuario determinando de entre todos, al que mayor promedio de calificaciones le ha asignado.
 
-Luego aparecen el resto de las APIs que ayudan a manejar la interacción del usuario.
+Luego aparecen el resto de las APIs que ayudan a manejar la interacción del usuario. Entre ellas la que se encarga de manejar una búsqueda del usuario por un título o autor de un libro. 
+
+```python
+@api_view(['GET'])
+def filter_books(request):
+```
+
+A partir de un preprocesamiento en `setup.py` de las palabras que conforman los títulos o nombres de autores, se almacenan en `books_by_word.json` y luego se cargan estos datos en un *Trie* cuando se ejecuta el servidor de Django. La API anterior recibe una consulta de búsqueda del usuario, y la procesa utilizando la librería nltk. Luego se hace una búsqueda sobre el *Trie*, de donde se extrae una selección de resultados de búsqueda que se ordena y devuelve al usuario de la app.
 
 En el archivo `utils.py` se encuentran las implementaciones de las funciones de los métodos de selección, ranking, la de la búsqueda en el grafo y la que imprime el log en el txt.
+
+
+
+
+
+## Insuficiencias y mejoras:
+
+Una insuficiencia de nuestro proyecto es que no resuelve el problema de **Cold Start**. Cold Start es cuando de un usuario no se conocen ratings alguno, y se desea hacer una recomendación, evidentemente el filtrado colaborativo no es una opción en este caso. Usualmente se opta por usar información extra del usuario, como los datos demográficos o la edad. Otra mejora que pudiera implementarse en el proyecto es el uso de la **Association Rule**, que hace un estudio de los productos que los usuarios suelen comprar en conjunto con otro determinado producto. Por ejemplo, si el $92$% de los usuarios que compran el primer libro de la saga de Harry Potter, también compran el segundo, entonces es una buena recomendación. Usualmente se toman aquellos productos con $70$% de coincidencia.
 
 
 

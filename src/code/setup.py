@@ -68,7 +68,8 @@ print('⏳ Starting save book indexed json...')
 indexed_books = {}
 books_by_word = {}
 
-stop_words = set(stopwords.words('english'))
+stop_words_english = set(stopwords.words('english'))
+stop_words_spanish = set(stopwords.words('spanish'))
 
 print('⏳ Scanning books...')
 with open(books_file, newline='', encoding='utf-8') as csvfile:
@@ -89,7 +90,7 @@ with open(books_file, newline='', encoding='utf-8') as csvfile:
         for word in (
             book['bookTitle'] + " " + book['bookAuthor']).split():
             word_lower = word.lower()
-            if word_lower not in stop_words and word_lower.isalpha():
+            if word_lower not in stop_words_english and word_lower not in stop_words_spanish and word_lower.isalpha():
                 if word_lower in books_by_word:
                     books_by_word[word_lower].append(book['isbn'])
                 else:

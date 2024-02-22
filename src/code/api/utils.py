@@ -20,7 +20,7 @@ def graph_search(user_books, book_user_list, user_book_list, show_log=True):
                 except:
                     l3.add(b2)
                     readers[b2] = [u]
-                    readers_count[b2] = 0
+                    readers_count[b2] = 1
     
     if show_log:
         log('\n[*] Graph search results:')
